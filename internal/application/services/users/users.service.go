@@ -5,12 +5,12 @@ import (
 	"go-rest/internal/domain/repositories"
 )
 
-type IUsersService interface {
-	GetById(id int) *dto.UserDto
-}
-
 type UsersService struct {
 	repository repositories.IUsersRepository
+}
+
+func NewUsersService(r repositories.IUsersRepository) IUsersService {
+	return &UsersService{r}
 }
 
 func (us *UsersService) GetById(id int) *dto.UserDto {
@@ -18,8 +18,10 @@ func (us *UsersService) GetById(id int) *dto.UserDto {
 	if entity == nil {
 		// TODO: handle
 	}
-	return &dto.UserDto {
-		Id: entity
+	// TODO: add automapper
+	return &dto.UserDto{
+		Id:    entity.Id,
+		Name:  entity.Name,
+		Email: entity.Email,
 	}
 }
-

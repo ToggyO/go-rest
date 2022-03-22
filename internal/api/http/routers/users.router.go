@@ -1,10 +1,11 @@
 package routers
 
 import (
-	"github.com/gin-gonic/gin"
 	"go-rest/internal/api/http/controllers"
 	"go-rest/internal/application/contracts"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type UsersRouter struct {

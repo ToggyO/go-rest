@@ -1,13 +1,14 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
 	"go-rest/internal/api/http/controllers"
 	"go-rest/internal/api/http/routers"
 	"go-rest/internal/application/contracts"
-	"go-rest/internal/infrastructure/di/ioc_utils"
-	"go.uber.org/dig"
+	"go-rest/internal/infrastructure/ioc/ioc_utils"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"go.uber.org/dig"
 )
 
 type AppRouters struct {

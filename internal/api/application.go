@@ -1,19 +1,20 @@
-package application
+package api
 
 import (
 	"context"
 	"errors"
 	api "go-rest/internal/api/http"
 	"go-rest/internal/config"
-	"go-rest/internal/infrastructure/di"
+	"go-rest/internal/infrastructure/ioc"
 	"go-rest/internal/infrastructure/server"
-	"go.uber.org/dig"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"go.uber.org/dig"
 )
 
 // TODO: add logger

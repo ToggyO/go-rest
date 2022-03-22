@@ -2,7 +2,7 @@ package data_access
 
 import (
 	"go-rest/internal/data_access/repositories"
-	"go-rest/internal/infrastructure/di/ioc_utils"
+	"go-rest/internal/infrastructure/ioc/ioc_utils"
 	"go.uber.org/dig"
 )
 

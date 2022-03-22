@@ -2,7 +2,9 @@ package ioc
 
 import (
 	api "go-rest/internal/api/http"
+	"go-rest/internal/application"
 	"go-rest/internal/data_access"
+
 	"go.uber.org/dig"
 )
 
@@ -14,6 +16,7 @@ func BuildIoc() (*dig.Container, error) {
 		api.BindControllers(container),
 		api.BindRouterGroups(container),
 		data_access.BindDataAccess(container),
+		application.BindApplicationServices(container),
 	}
 
 	for _, val := range errors {
