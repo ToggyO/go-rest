@@ -1,28 +1,27 @@
 package controllers
 
 import (
-	services "go-rest/internal/application/services/users"
+	"go-rest/internal/api/http/handlers"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-type UsersController struct {
-	service services.IUsersService
+type usersController struct {
+	handler handlers.IUsersHandler
 }
 
-func (uc *UsersController) GetById(ctx *gin.Context) {
+func (uc *usersController) GetById(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		// todo: return error response
+		// TODO: return error response
 	}
 
-	user := uc.service.GetById(id)
-
-	ctx.JSON(http.StatusOK, user)
+	result := uc.handler.GetById(id)
+	ctx.JSON(http.StatusOK, result)
 }
 
-func NewUsersController(s services.IUsersService) *UsersController {
-	return &UsersController{s}
+func NewUsersController(h handlers.IUsersHandler) *usersController {
+	return &usersController{h}
 }

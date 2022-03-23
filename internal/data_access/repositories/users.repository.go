@@ -14,7 +14,7 @@ var user = &users.User{
 	Password: "123456",
 }
 
-type UsersRepository struct {
+type usersRepository struct {
 	connection *sql.DB
 }
 
@@ -24,21 +24,21 @@ type UsersRepository struct {
 //}
 
 func NewUsersRepository() repositories.IUsersRepository {
-	return &UsersRepository{}
+	return &usersRepository{}
 }
 
-func (ur *UsersRepository) GetById(id int) *users.User {
+func (ur *usersRepository) GetById(id int) *users.User {
 	return user
 }
 
-func (ur *UsersRepository) Create(entity *users.User) *users.User {
+func (ur *usersRepository) Create(entity *users.User) *users.User {
 	return user
 }
 
-func (ur *UsersRepository) Update(entity *users.User) *users.User {
+func (ur *usersRepository) Update(entity *users.User) *users.User {
 	return user
 }
 
-func (ur *UsersRepository) Delete(id int) *users.User {
+func (ur *usersRepository) Delete(id int) *users.User {
 	return user
 }

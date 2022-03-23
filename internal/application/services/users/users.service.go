@@ -5,15 +5,15 @@ import (
 	"go-rest/internal/domain/repositories"
 )
 
-type UsersService struct {
+type usersService struct {
 	repository repositories.IUsersRepository
 }
 
 func NewUsersService(r repositories.IUsersRepository) IUsersService {
-	return &UsersService{r}
+	return &usersService{r}
 }
 
-func (us *UsersService) GetById(id int) *dto.UserDto {
+func (us *usersService) GetById(id int) *dto.UserDto {
 	entity := us.repository.GetById(id)
 	if entity == nil {
 		// TODO: handle

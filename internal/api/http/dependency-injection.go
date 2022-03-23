@@ -2,6 +2,7 @@ package api
 
 import (
 	"go-rest/internal/api/http/controllers"
+	"go-rest/internal/api/http/handlers"
 	"go-rest/internal/api/http/routers"
 	"go-rest/internal/application/contracts"
 	"go-rest/internal/infrastructure/ioc/ioc_utils"
@@ -19,6 +20,14 @@ type AppRouters struct {
 
 func BindRouter() http.Handler {
 	return gin.Default()
+}
+
+func BindHandlers(container *dig.Container) error {
+	serviceDescriptors := []ioc_utils.ServiceDescriptor{
+		{Service: handlers.NewUsersHandler},
+	}
+
+	return ioc_utils.HandleServiceDescriptors(container, serviceDescriptors)
 }
 
 func BindControllers(container *dig.Container) error {

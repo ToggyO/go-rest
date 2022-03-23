@@ -8,19 +8,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type UsersRouter struct {
+type usersRouter struct {
 	usersController *controllers.UsersController
 	handler         *gin.Engine
 }
 
 func NewUsersRouter(uc *controllers.UsersController, h http.Handler) contracts.IRouteBinder {
-	return &UsersRouter{
+	return &usersRouter{
 		usersController: uc,
 		handler:         h.(*gin.Engine),
 	}
 }
 
-func (r *UsersRouter) Bind() {
+func (r *usersRouter) Bind() {
 	users := r.handler.Group("/users")
 	{
 		users.GET("/:id", r.usersController.GetById)

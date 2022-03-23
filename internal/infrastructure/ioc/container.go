@@ -8,11 +8,13 @@ import (
 	"go.uber.org/dig"
 )
 
+// TODO: turn into API layer mb or just into separated folder
 func BuildIoc() (*dig.Container, error) {
 	container := dig.New()
 
 	errors := []error{
 		container.Provide(api.BindRouter),
+		api.BindHandlers(container),
 		api.BindControllers(container),
 		api.BindRouterGroups(container),
 		data_access.BindDataAccess(container),
