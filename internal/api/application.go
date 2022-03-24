@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	api "go-rest/internal/api/http"
-	"go-rest/internal/config"
+	"go-rest/internal/infrastructure/config"
 	"go-rest/internal/infrastructure/ioc"
 	"go-rest/internal/infrastructure/server"
 	"log"

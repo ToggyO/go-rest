@@ -1,4 +1,4 @@
-package validation
+package error_messages
 
 import (
 	"fmt"

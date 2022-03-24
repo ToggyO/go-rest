@@ -13,7 +13,9 @@ func BuildIoc() (*dig.Container, error) {
 	container := dig.New()
 
 	errors := []error{
-		container.Provide(api.BindRouter),
+		// TODO: check
+		// container.Provide(api.BindRouter),
+		api.BindRouter(container),
 		api.BindHandlers(container),
 		api.BindControllers(container),
 		api.BindRouterGroups(container),

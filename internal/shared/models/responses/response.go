@@ -1,4 +1,4 @@
-package response
+package responses
 
 type Response[T any] struct {
 	HttpStatusCode int    `json:"-"`
@@ -9,7 +9,7 @@ type Response[T any] struct {
 	ErrorResponse   *errorResponse[T]   `json:"errorResponse"`
 }
 
-func NewDefaultResponse[T any]() *Response[T] {
+func NewResponse[T any]() *Response[T] {
 	return &Response[T]{
 		// TODO: into constants
 		HttpStatusCode: 200,

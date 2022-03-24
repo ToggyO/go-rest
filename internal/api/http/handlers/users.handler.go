@@ -3,12 +3,12 @@ package handlers
 import (
 	dto "go-rest/internal/application/dto/users"
 	services "go-rest/internal/application/services/users"
-	"go-rest/internal/shared/constants/errors/error_codes/global"
-	"go-rest/internal/shared/models/response"
+	"go-rest/internal/shared/models/responses"
 )
 
 type IUsersHandler interface {
-	GetById(id int) *response.Response[*dto.UserDto]
+	GetById(id int) *responses.Response[*dto.UserDto]
+	Create(obj *dto.CreateUserDto) *responses.Response[*dto.UserDto]
 }
 
 type usersHandler struct {
@@ -19,16 +19,23 @@ func NewUsersHandler(s services.IUsersService) IUsersHandler {
 	return &usersHandler{s}
 }
 
-func (uh *usersHandler) GetById(id int) *response.Response[*dto.UserDto] {
-	r := response.NewDefaultResponse[*dto.UserDto]()
-
+func (uh *usersHandler) GetById(id int) *responses.Response[*dto.UserDto] {
 	user := uh.service.GetById(id)
 	if user == nil {
-		// TODO: into constants
-		return r.ToErrorResponse(404, global.NotFound, "Not found", r.DefaultValidationError())
+		return responses.NewNotFoundErrorResponse[*dto.UserDto]()
 	}
 
+	r := responses.NewResponse[*dto.UserDto]()
 	r.SuccessResponse.Data = user
 	return r
 
+}
+
+func (uh *usersHandler) Create(obj *dto.CreateUserDto) *responses.Response[*dto.UserDto] {
+	user := uh.service.Create(obj)
+
+	r := responses.NewResponse[*dto.UserDto]()
+	r.SuccessResponse.Data = user
+
+	return r
 }

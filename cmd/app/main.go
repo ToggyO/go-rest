@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	application "go-rest/internal/api"
-	"go-rest/internal/config"
+	"go-rest/internal/infrastructure/config"
 	"os"
 	"path/filepath"
 )

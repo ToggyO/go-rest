@@ -18,9 +18,30 @@ type AppRouters struct {
 	Routers []contracts.IRouteBinder `group:"routers"`
 }
 
-func BindRouter() http.Handler {
-	return gin.Default()
+func BindRouter(container *dig.Container) error {
+	r := NewAppRouter()
+	r.AddGlobalRoutePrefix("/api")
+
+	bindRouter := func() http.Handler {
+		return r.Router
+	}
+
+	bindRouterGroup := func() *gin.RouterGroup {
+		return r.RouterGroup
+	}
+
+	serviceDescriptors := []ioc_utils.ServiceDescriptor{
+		{Service: bindRouter},
+		{Service: bindRouterGroup},
+	}
+
+	return ioc_utils.HandleServiceDescriptors(container, serviceDescriptors)
 }
+
+// TODO: check
+// func BindRouter() http.Handler {
+// 	return gin.Default()
+// }
 
 func BindHandlers(container *dig.Container) error {
 	serviceDescriptors := []ioc_utils.ServiceDescriptor{
