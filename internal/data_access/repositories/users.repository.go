@@ -7,7 +7,7 @@ import (
 )
 
 // TODO: delete
-var user = &users.User{
+var user = &users.UserModel{
 	Id:    1,
 	Name:  "Slava",
 	Email: "Ukrainin",
@@ -15,7 +15,7 @@ var user = &users.User{
 
 type usersRepository struct {
 	connection *sql.DB
-	users      []*users.User
+	users      []*users.UserModel
 }
 
 // TODO: uncomment
@@ -25,7 +25,7 @@ type usersRepository struct {
 
 func NewUsersRepository() repositories.IUsersRepository {
 	return &usersRepository{
-		users: []*users.User{
+		users: []*users.UserModel{
 			{
 				Id:    1,
 				Name:  "Slava",
@@ -45,8 +45,8 @@ func NewUsersRepository() repositories.IUsersRepository {
 	}
 }
 
-func (ur *usersRepository) GetById(id int) *users.User {
-	var user *users.User
+func (ur *usersRepository) GetById(id int) *users.UserModel {
+	var user *users.UserModel
 	for _, v := range ur.users {
 		if v.Id == id {
 			user = v
@@ -55,18 +55,18 @@ func (ur *usersRepository) GetById(id int) *users.User {
 	return user
 }
 
-func (ur *usersRepository) Create(model *users.User) *users.User {
+func (ur *usersRepository) Create(model *users.UserModel) *users.UserModel {
 	_, max := ur.findMaxAndMinId()
 	model.Id = max + 1
 	ur.users = append(ur.users, model)
 	return model
 }
 
-func (ur *usersRepository) Update(model *users.User) *users.User {
+func (ur *usersRepository) Update(model *users.UserModel) *users.UserModel {
 	return user
 }
 
-func (ur *usersRepository) Delete(id int) *users.User {
+func (ur *usersRepository) Delete(id int) *users.UserModel {
 	return user
 }
 

@@ -1,6 +1,6 @@
 package users
 
-type User struct {
+type UserModel struct {
 	Id    int
 	Name  string
 	Email string

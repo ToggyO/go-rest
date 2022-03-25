@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"go-rest/internal/api/http/validation"
 	dto "go-rest/internal/application/dto/users"
 	services "go-rest/internal/application/services/users"
 	"go-rest/internal/shared/models/responses"
@@ -32,6 +33,11 @@ func (uh *usersHandler) GetById(id int) *responses.Response[*dto.UserDto] {
 }
 
 func (uh *usersHandler) Create(obj *dto.CreateUserDto) *responses.Response[*dto.UserDto] {
+	validationResponse := validation.ValidateModel[*dto.CreateUserDto, *dto.UserDto](obj)
+	if !validationResponse.Success {
+		return validationResponse
+	}
+
 	user := uh.service.Create(obj)
 
 	r := responses.NewResponse[*dto.UserDto]()

@@ -1,5 +1,7 @@
 package responses
 
+import "net/http"
+
 type Response[T any] struct {
 	HttpStatusCode int    `json:"-"`
 	Success        bool   `json:"success"`
@@ -9,10 +11,9 @@ type Response[T any] struct {
 	ErrorResponse   *errorResponse[T]   `json:"errorResponse"`
 }
 
-func NewResponse[T any]() *Response[T] {
+func NewResponse[T interface{}]() *Response[T] {
 	return &Response[T]{
-		// TODO: into constants
-		HttpStatusCode: 200,
+		HttpStatusCode: http.StatusOK,
 		Success:        true,
 		Code:           "success",
 
@@ -21,11 +22,11 @@ func NewResponse[T any]() *Response[T] {
 	}
 }
 
-func (h Response[T]) ToErrorResponse(
+func NewErrorResponse[T interface{}](
 	httpStatus int,
 	code string,
 	message string,
-	errors []ValidationError,
+	errors []*ValidationError,
 ) *Response[T] {
 	return &Response[T]{
 		Success:         false,
@@ -39,8 +40,24 @@ func (h Response[T]) ToErrorResponse(
 	}
 }
 
-func (h Response[T]) DefaultValidationError() []ValidationError {
-	return make([]ValidationError, 0)
+func (r *Response[T]) ToErrorResponse(
+	httpStatus int,
+	code string,
+	message string,
+	errors []*ValidationError,
+) {
+	r.Success = false
+	r.HttpStatusCode = httpStatus
+	r.Code = code
+	r.SuccessResponse = nil
+	r.ErrorResponse = &errorResponse[T]{
+		Message: message,
+		Errors:  errors,
+	}
+}
+
+func (r Response[T]) DefaultValidationError() []*ValidationError {
+	return make([]*ValidationError, 0)
 }
 
 type successResponse[T any] struct {
@@ -48,8 +65,8 @@ type successResponse[T any] struct {
 }
 
 type errorResponse[T any] struct {
-	Message string            `json:"message"`
-	Errors  []ValidationError `json:"errors"`
+	Message string             `json:"message"`
+	Errors  []*ValidationError `json:"errors"`
 }
 
 type ValidationError struct {
