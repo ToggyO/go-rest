@@ -3,7 +3,7 @@ package application
 import (
 	"context"
 	"errors"
-	api "go-rest/internal/api/http"
+	"go-rest/internal/application/contracts"
 	"go-rest/internal/infrastructure/config"
 	"go-rest/internal/infrastructure/ioc"
 	"go-rest/internal/infrastructure/server"
@@ -13,22 +13,22 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-
-	"go.uber.org/dig"
 )
 
-// TODO: add logger
 type Application struct {
 	server        *server.Server
 	configuration *config.Configuration
-	container     *dig.Container
+	container     ioc.ContainerWrapper
+	logger        contracts.ILogger
 }
 
 func NewApplication(configuration *config.Configuration) (*Application, error) {
 	var httpHandler http.Handler
+	var logger contracts.ILogger
 
-	c, err := ioc.BuildIoc()
-	err = c.Invoke(func(h http.Handler) { httpHandler = h })
+	c, err := ioc.NewIoc(configuration)
+	err = c.GetService(func(h http.Handler) { httpHandler = h })
+	err = c.GetService(func(l contracts.ILogger) { logger = l })
 
 	if err != nil {
 		return nil, err
@@ -37,6 +37,7 @@ func NewApplication(configuration *config.Configuration) (*Application, error) {
 	app := &Application{
 		configuration: configuration,
 		container:     c,
+		logger:        logger,
 	}
 
 	srv := server.NewServer(httpHandler, app.configuration)
@@ -45,10 +46,6 @@ func NewApplication(configuration *config.Configuration) (*Application, error) {
 }
 
 func (a *Application) Run() {
-	if err := a.bindRoutes(); err != nil {
-		log.Fatalf("Error occurred while binding http routes: %s\n", err.Error())
-	}
-
 	go func() {
 		if err := a.server.Start(); errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("Error occurred while running http server: %s\n", err.Error())
@@ -58,14 +55,6 @@ func (a *Application) Run() {
 	log.Println("Server started!")
 
 	a.handleShutdown()
-}
-
-func (a *Application) bindRoutes() error {
-	return a.container.Invoke(func(ar api.AppRouters) {
-		for _, r := range ar.Routers {
-			r.Bind()
-		}
-	})
 }
 
 func (a *Application) handleShutdown() {
@@ -78,6 +67,7 @@ func (a *Application) handleShutdown() {
 
 	ctx, shutdown := context.WithTimeout(context.Background(), timeout)
 	defer shutdown()
+	defer a.logger.Flush()
 
 	if err := a.server.Stop(ctx); err != nil {
 		log.Fatalf("Failed to stop server: %v", err)

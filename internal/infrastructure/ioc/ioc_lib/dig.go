@@ -1,21 +1,20 @@
-package ioc
+package ioc_lib
 
 import (
 	api "go-rest/internal/api/http"
 	"go-rest/internal/application"
 	"go-rest/internal/data_access"
+	"go-rest/internal/infrastructure/config"
 	"go-rest/internal/infrastructure/services"
 
 	"go.uber.org/dig"
 )
 
-// TODO: turn into API layer mb or just into separated folder
-func BuildIoc() (*dig.Container, error) {
+func BuildDigIoc(configuration *config.Configuration) (*dig.Container, error) {
 	container := dig.New()
 
 	errors := []error{
-		// TODO: check
-		// container.Provide(api.BindRouter),
+		container.Provide(func() *config.Configuration { return configuration }),
 		api.BindRouter(container),
 		api.BindHandlers(container),
 		api.BindControllers(container),
@@ -29,6 +28,14 @@ func BuildIoc() (*dig.Container, error) {
 		if val != nil {
 			return nil, val
 		}
+	}
+
+	collection := []func(c *dig.Container){
+		api.AfterBuild,
+	}
+
+	for _, f := range collection {
+		f(container)
 	}
 
 	return container, nil

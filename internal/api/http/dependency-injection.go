@@ -5,7 +5,7 @@ import (
 	"go-rest/internal/api/http/handlers"
 	"go-rest/internal/api/http/routers"
 	"go-rest/internal/application/contracts"
-	"go-rest/internal/infrastructure/ioc/ioc_utils"
+	"go-rest/internal/infrastructure/ioc/ioc_lib"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -30,37 +30,32 @@ func BindRouter(container *dig.Container) error {
 		return r.RouterGroup
 	}
 
-	serviceDescriptors := []ioc_utils.ServiceDescriptor{
+	serviceDescriptors := []ioc_lib.ServiceDescriptor{
 		{Service: bindRouter},
 		{Service: bindRouterGroup},
 	}
 
-	return ioc_utils.HandleServiceDescriptors(container, serviceDescriptors)
+	return ioc_lib.HandleServiceDescriptors(container, serviceDescriptors)
 }
 
-// TODO: check
-// func BindRouter() http.Handler {
-// 	return gin.Default()
-// }
-
 func BindHandlers(container *dig.Container) error {
-	serviceDescriptors := []ioc_utils.ServiceDescriptor{
+	serviceDescriptors := []ioc_lib.ServiceDescriptor{
 		{Service: handlers.NewUsersHandler},
 	}
 
-	return ioc_utils.HandleServiceDescriptors(container, serviceDescriptors)
+	return ioc_lib.HandleServiceDescriptors(container, serviceDescriptors)
 }
 
 func BindControllers(container *dig.Container) error {
-	serviceDescriptors := []ioc_utils.ServiceDescriptor{
+	serviceDescriptors := []ioc_lib.ServiceDescriptor{
 		{Service: controllers.NewUsersController},
 	}
 
-	return ioc_utils.HandleServiceDescriptors(container, serviceDescriptors)
+	return ioc_lib.HandleServiceDescriptors(container, serviceDescriptors)
 }
 
 func BindRouterGroups(container *dig.Container) error {
-	serviceDescriptors := []ioc_utils.ServiceDescriptor{
+	serviceDescriptors := []ioc_lib.ServiceDescriptor{
 		{Service: routers.NewUsersRouter},
 	}
 
@@ -68,5 +63,13 @@ func BindRouterGroups(container *dig.Container) error {
 		serviceDescriptors[i].Options = append(serviceDescriptors[i].Options, dig.Group("routers"))
 	}
 
-	return ioc_utils.HandleServiceDescriptors(container, serviceDescriptors)
+	return ioc_lib.HandleServiceDescriptors(container, serviceDescriptors)
+}
+
+func AfterBuild(container *dig.Container) {
+	container.Invoke(func(ar AppRouters) {
+		for _, r := range ar.Routers {
+			r.Bind()
+		}
+	})
 }

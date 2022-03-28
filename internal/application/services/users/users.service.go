@@ -32,12 +32,6 @@ func (us *usersService) GetById(id int) *dto.UserDto {
 func (us *usersService) Create(obj *dto.CreateUserDto) *dto.UserDto {
 	// TODO: add automapper
 	passwordModel := us.passwordService.CreatePasswordAndGenerateSalt(obj.Password)
-
-	v := us.passwordService.VerifyPassword(passwordModel, passwordModel.Hash)
-	if !v {
-		panic("NOT VALID")
-	}
-
 	model := &users.UserModel{
 		Name:  obj.Name,
 		Email: obj.Email,

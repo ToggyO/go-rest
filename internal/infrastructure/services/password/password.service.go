@@ -1,4 +1,4 @@
-package services
+package password
 
 import (
 	"crypto/sha512"
@@ -15,7 +15,6 @@ func NewPasswordService() contracts.IPasswordService {
 }
 
 func (ps *passwordService) CreatePassword(password string, salt string) *users.PasswordModel {
-
 	passwordBytes := []byte(password)
 	passwordBytes = append(passwordBytes, []byte(salt)...)
 

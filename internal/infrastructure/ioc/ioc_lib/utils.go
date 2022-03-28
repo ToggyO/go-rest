@@ -1,4 +1,4 @@
-package ioc_utils
+package ioc_lib
 
 import (
 	"go.uber.org/dig"
