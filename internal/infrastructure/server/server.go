@@ -3,7 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
-	"go-rest/internal/infrastructure/config"
+	"go-rest/internal/config"
 	"net/http"
 )
 

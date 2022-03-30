@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"go-rest/internal/application/contracts"
-	"go-rest/internal/infrastructure/config"
+	"go-rest/internal/config"
 	"go-rest/internal/infrastructure/ioc"
 	"go-rest/internal/infrastructure/server"
 	"log"
@@ -26,6 +26,7 @@ func NewApplication(configuration *config.Configuration) (*Application, error) {
 	var httpHandler http.Handler
 	var logger contracts.ILogger
 
+	// TODO: вынести создание контейнера
 	c, err := ioc.NewIoc(configuration)
 	err = c.GetService(func(h http.Handler) { httpHandler = h })
 	err = c.GetService(func(l contracts.ILogger) { logger = l })
@@ -55,6 +56,11 @@ func (a *Application) Run() {
 	log.Println("Server started!")
 
 	a.handleShutdown()
+}
+
+func (a *Application) SetCustomIoC(ioc ioc.ContainerWrapper) {
+	// TODO: implement me
+	panic("implement me!")
 }
 
 func (a *Application) handleShutdown() {

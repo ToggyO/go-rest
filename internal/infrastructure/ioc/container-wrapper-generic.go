@@ -1,7 +1,7 @@
 package ioc
 
 import (
-	"go-rest/internal/infrastructure/config"
+	"go-rest/internal/config"
 	"go-rest/internal/infrastructure/ioc/ioc_lib"
 	"go.uber.org/dig"
 )

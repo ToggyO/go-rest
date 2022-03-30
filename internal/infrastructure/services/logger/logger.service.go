@@ -2,7 +2,7 @@ package logger
 
 import (
 	"go-rest/internal/application/contracts"
-	"go-rest/internal/infrastructure/config"
+	"go-rest/internal/config"
 	"go.uber.org/zap"
 )
 

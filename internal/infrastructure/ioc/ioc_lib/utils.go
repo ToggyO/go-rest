@@ -1,19 +1,17 @@
 package ioc_lib
 
 import (
+	"go-rest/internal/shared/models/di"
 	"go.uber.org/dig"
 )
 
-type ServiceDescriptor struct {
-	Service interface{}
-	Options []dig.ProvideOption
-}
-
-func HandleServiceDescriptors(container *dig.Container, serviceDescriptors []ServiceDescriptor) error {
+func HandleServiceDescriptors(container *dig.Container, serviceDescriptors []di.ServiceDescriptor) error {
 	for _, sd := range serviceDescriptors {
-		if err := container.Provide(sd.Service, sd.Options...); err != nil {
-			return err
+		if sd.Options == nil {
+			return container.Provide(sd.Service)
 		}
+
+		return container.Provide(sd.Service, sd.Options.([]dig.ProvideOption)...)
 	}
 
 	return nil

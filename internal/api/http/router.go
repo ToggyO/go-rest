@@ -1,6 +1,9 @@
 package api
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"strings"
+)
 
 type AppRouter struct {
 	Router      *gin.Engine
@@ -16,5 +19,8 @@ func NewAppRouter() *AppRouter {
 }
 
 func (e *AppRouter) AddGlobalRoutePrefix(prefix string) {
+	if !strings.HasPrefix(prefix, "/") {
+		prefix = "/" + prefix
+	}
 	e.RouterGroup = e.Router.Group(prefix)
 }

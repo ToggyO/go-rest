@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/natefinch/lumberjack"
-	"go-rest/internal/infrastructure/config"
+	"go-rest/internal/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"io/ioutil"

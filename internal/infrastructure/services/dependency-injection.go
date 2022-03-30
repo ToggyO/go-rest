@@ -1,17 +1,14 @@
 package services
 
 import (
-	"go-rest/internal/infrastructure/ioc/ioc_lib"
 	"go-rest/internal/infrastructure/services/logger"
 	"go-rest/internal/infrastructure/services/password"
-	"go.uber.org/dig"
+	"go-rest/internal/shared/models/di"
 )
 
-func BindInfrastructure(container *dig.Container) error {
-	serviceDescriptor := []ioc_lib.ServiceDescriptor{
+func BindInfrastructure() []di.ServiceDescriptor {
+	return []di.ServiceDescriptor{
 		{Service: logger.NewLoggerService},
 		{Service: password.NewPasswordService},
 	}
-
-	return ioc_lib.HandleServiceDescriptors(container, serviceDescriptor)
 }

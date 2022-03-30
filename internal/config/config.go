@@ -12,9 +12,10 @@ const (
 )
 
 type Configuration struct {
-	GoEnv string
-	Host  string
-	Port  string
+	GoEnv       string
+	Host        string
+	Port        string
+	RoutePrefix string
 
 	IsDev   bool
 	IsStage bool
@@ -24,9 +25,10 @@ type Configuration struct {
 func BuildConfigurationFromEnv(envFilePath string) *Configuration {
 	godotenv.Load(envFilePath)
 	cfg := &Configuration{
-		GoEnv: utils.GetEnv("GO_ENV", "development"),
-		Host:  utils.GetEnv("HOST", "localhost"),
-		Port:  utils.GetEnv("PORT", "50311"),
+		GoEnv:       utils.GetEnv("GO_ENV", "development"),
+		Host:        utils.GetEnv("GO_REST_HOST", "localhost"),
+		Port:        utils.GetEnv("GO_REST_PORT", "50311"),
+		RoutePrefix: utils.GetEnv("GO_REST_ROUTE_PREFIX", "50311"),
 	}
 
 	return buildManually(cfg)
