@@ -10,7 +10,7 @@ type loggerService struct {
 	logger *zap.Logger
 }
 
-// NewLogger - creates new logger instance
+// NewLoggerService - creates new logger instance
 func NewLoggerService(configuration *config.Configuration) contracts.ILogger {
 	loggerBuilder := NewLoggerBuilder(configuration)
 	return &loggerService{
@@ -36,6 +36,11 @@ func (l *loggerService) Warn(message string) {
 // TODO: implement second param of type zap.Field...
 func (l *loggerService) Error(message string) {
 	l.logger.Error(message)
+}
+
+// TODO: implement second param of type zap.Field...
+func (l *loggerService) Fatal(message string) {
+	l.logger.Fatal(message)
 }
 
 func (l *loggerService) Flush() {

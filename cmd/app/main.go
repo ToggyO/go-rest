@@ -12,12 +12,12 @@ func main() {
 	pwd, _ := os.Getwd()
 	envPath := filepath.Join(pwd, ".env")
 
-	app, err := application.NewApplication(
-		config.BuildConfigurationFromEnv(envPath),
-	)
-	// TODO: handle error properly
+	builder := application.NewApplication(config.BuildConfigurationFromEnv(envPath))
+	app, err := builder.Build()
+
 	if err != nil {
-		panic(fmt.Sprintf("Failed to start application: %s", err))
+		fmt.Println(fmt.Sprintf("Application build has failed: %s", err))
+		os.Exit(1)
 	}
 
 	app.Run()

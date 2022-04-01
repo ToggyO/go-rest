@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"go-rest/internal/config"
 	"go-rest/internal/infrastructure/ioc/ioc_lib"
+	"go-rest/internal/shared/interfaces"
 	"go.uber.org/dig"
 	"reflect"
 )
@@ -13,7 +14,7 @@ type containerWrapper struct {
 	container *dig.Container
 }
 
-func NewIoc(configuration *config.Configuration) (ContainerWrapper, error) {
+func NewIoc(configuration *config.Configuration) (interfaces.IServiceProvider, error) {
 	container, err := ioc_lib.BuildDigIoc(configuration)
 	if err != nil {
 		return nil, err

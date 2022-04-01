@@ -6,13 +6,15 @@ import (
 )
 
 func HandleServiceDescriptors(container *dig.Container, serviceDescriptors []di.ServiceDescriptor) error {
+	var err error
 	for _, sd := range serviceDescriptors {
 		if sd.Options == nil {
-			return container.Provide(sd.Service)
+			err = container.Provide(sd.Service)
+			continue
 		}
 
-		return container.Provide(sd.Service, sd.Options.([]dig.ProvideOption)...)
+		err = container.Provide(sd.Service, sd.Options.([]dig.ProvideOption)...)
 	}
 
-	return nil
+	return err
 }

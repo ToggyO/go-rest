@@ -17,6 +17,13 @@ type Configuration struct {
 	Port        string
 	RoutePrefix string
 
+	DbHost         string
+	DbName         string
+	DbUser         string
+	DbPassword     string
+	DbPort         string
+	DbExternalPort string
+
 	IsDev   bool
 	IsStage bool
 	IsProd  bool
@@ -29,6 +36,13 @@ func BuildConfigurationFromEnv(envFilePath string) *Configuration {
 		Host:        utils.GetEnv("GO_REST_HOST", "localhost"),
 		Port:        utils.GetEnv("GO_REST_PORT", "50311"),
 		RoutePrefix: utils.GetEnv("GO_REST_ROUTE_PREFIX", "50311"),
+
+		DbHost:         utils.GetEnv("GO_REST_DB_HOST", ""),
+		DbName:         utils.GetEnv("GO_REST_DB_NAME", ""),
+		DbUser:         utils.GetEnv("GO_REST_DB_USER", ""),
+		DbPassword:     utils.GetEnv("GO_REST_DB_PASSWORD", ""),
+		DbPort:         utils.GetEnv("GO_REST_DB_PORT", ""),
+		DbExternalPort: utils.GetEnv("GO_REST_DB_EXTERNAL_PORT", ""),
 	}
 
 	return buildManually(cfg)

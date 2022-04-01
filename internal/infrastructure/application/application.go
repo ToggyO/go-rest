@@ -2,12 +2,12 @@ package application
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"go-rest/internal/application/contracts"
 	"go-rest/internal/config"
 	"go-rest/internal/infrastructure/ioc"
 	"go-rest/internal/infrastructure/server"
-	"log"
+	"go-rest/internal/shared/interfaces"
 	"net/http"
 	"os"
 	"os/signal"
@@ -16,58 +16,72 @@ import (
 )
 
 type Application struct {
-	server        *server.Server
+	host          interfaces.IHost
 	configuration *config.Configuration
-	container     ioc.ContainerWrapper
+	container     interfaces.IServiceProvider
 	logger        contracts.ILogger
 }
 
-func NewApplication(configuration *config.Configuration) (*Application, error) {
+func NewApplication(configuration *config.Configuration) IApplicationBuilder {
+	return &Application{configuration: configuration}
+}
+
+func (a *Application) SetServiceProvider(serviceProvider interfaces.IServiceProvider) IApplicationBuilder {
+	a.container = serviceProvider
+	return a
+}
+
+func (a *Application) SetWebHost(host interfaces.IHost) IApplicationBuilder {
+	a.host = host
+	return a
+}
+
+func (a *Application) Build() (IApplication, error) {
+	var container interfaces.IServiceProvider
 	var httpHandler http.Handler
 	var logger contracts.ILogger
+	var err error
 
-	// TODO: вынести создание контейнера
-	c, err := ioc.NewIoc(configuration)
-	err = c.GetService(func(h http.Handler) { httpHandler = h })
-	err = c.GetService(func(l contracts.ILogger) { logger = l })
+	if a.container == nil {
+		container, err = ioc.NewIoc(a.configuration)
+		a.container = container
+	}
+
+	if a.host == nil {
+		err = a.container.GetService(func(h http.Handler) { httpHandler = h })
+		srv := server.NewServer(httpHandler, a.configuration)
+		a.host = &srv
+	}
+
+	err = a.container.GetService(func(l contracts.ILogger) { logger = l })
 
 	if err != nil {
 		return nil, err
 	}
 
-	app := &Application{
-		configuration: configuration,
-		container:     c,
-		logger:        logger,
-	}
-
-	srv := server.NewServer(httpHandler, app.configuration)
-	app.server = &srv
-	return app, nil
+	a.logger = logger
+	return a, err
 }
 
 func (a *Application) Run() {
 	go func() {
-		if err := a.server.Start(); errors.Is(err, http.ErrServerClosed) {
-			log.Fatalf("Error occurred while running http server: %s\n", err.Error())
+		if err := a.host.Start(); err != nil && err != http.ErrServerClosed {
+			a.logger.Fatal(fmt.Sprintf("Error occurred while running http server: %s\n", err.Error()))
 		}
 	}()
 	// TODO: log server address to console
-	log.Println("Server started!")
+	a.logger.Info("Server started!")
 
 	a.handleShutdown()
 }
 
-func (a *Application) SetCustomIoC(ioc ioc.ContainerWrapper) {
-	// TODO: implement me
-	panic("implement me!")
-}
-
+// TODO: user ErrorGroup package
 func (a *Application) handleShutdown() {
 	quitChan := make(chan os.Signal, 1)
 	signal.Notify(quitChan, syscall.SIGINT, syscall.SIGTERM)
 
 	<-quitChan
+	a.logger.Info("Shutdown server ...")
 
 	const timeout = 5 * time.Second
 
@@ -75,7 +89,13 @@ func (a *Application) handleShutdown() {
 	defer shutdown()
 	defer a.logger.Flush()
 
-	if err := a.server.Stop(ctx); err != nil {
-		log.Fatalf("Failed to stop server: %v", err)
+	if err := a.host.Stop(ctx); err != nil {
+		a.logger.Fatal(fmt.Sprintf("Failed to stop server: %v", err))
 	}
+
+	select {
+	case <-ctx.Done():
+		a.logger.Info("Timeout of 5 seconds.")
+	}
+	a.logger.Info("Server is stopped!")
 }

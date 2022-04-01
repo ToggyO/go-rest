@@ -2,6 +2,21 @@ package responses
 
 import "net/http"
 
+type successResponse[T any] struct {
+	Data T `json:"data"`
+}
+
+type errorResponse[T any] struct {
+	Message string             `json:"message"`
+	Errors  []*ValidationError `json:"errors"`
+}
+
+type ValidationError struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
+	Field   string `json:"field"`
+}
+
 type Response[T any] struct {
 	HttpStatusCode int    `json:"-"`
 	Success        bool   `json:"success"`
@@ -56,21 +71,6 @@ func (r *Response[T]) ToErrorResponse(
 	}
 }
 
-func (r Response[T]) DefaultValidationError() []*ValidationError {
+func DefaultValidationError() []*ValidationError {
 	return make([]*ValidationError, 0)
-}
-
-type successResponse[T any] struct {
-	Data T `json:"data"`
-}
-
-type errorResponse[T any] struct {
-	Message string             `json:"message"`
-	Errors  []*ValidationError `json:"errors"`
-}
-
-type ValidationError struct {
-	Code    string `json:"code"`
-	Message string `json:"message"`
-	Field   string `json:"field"`
 }

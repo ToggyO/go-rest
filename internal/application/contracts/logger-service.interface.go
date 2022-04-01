@@ -5,5 +5,6 @@ type ILogger interface {
 	Info(message string)
 	Warn(message string)
 	Error(message string)
+	Fatal(message string)
 	Flush()
 }
