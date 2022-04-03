@@ -2,8 +2,10 @@ package repositories
 
 import (
 	db_context "go-rest/internal/data_access/db-context"
+	entities "go-rest/internal/data_access/entities/users"
 	"go-rest/internal/domain/models/users"
 	"go-rest/internal/domain/repositories"
+	"gorm.io/gorm"
 )
 
 // TODO: delete
@@ -14,12 +16,12 @@ var user = &users.UserModel{
 }
 
 type usersRepository struct {
-	context *db_context.GormDbContext
+	context *gorm.DB
 	//users      []*users.UserModel
 }
 
-func NewUsersRepository(c *db_context.GormDbContext) repositories.IUsersRepository {
-	return &usersRepository{c}
+func NewUsersRepository(c *db_context.AppDbContext) repositories.IUsersRepository {
+	return &usersRepository{c.GetConnection()}
 }
 
 //func NewUsersRepository() repositories.IUsersRepository {
@@ -45,20 +47,15 @@ func NewUsersRepository(c *db_context.GormDbContext) repositories.IUsersReposito
 //}
 
 func (ur *usersRepository) GetById(id int) *users.UserModel {
+	// TODO: add automapper
 	var user *users.UserModel
-	user =
-	//for _, v := range ur.users {
-	//	if v.Id == id {
-	//		user = v
-	//	}
-	//}
+	entity := entities.UserEntity{}
+	ur.context.First(user, id)
 	return user
 }
 
 func (ur *usersRepository) Create(model *users.UserModel) *users.UserModel {
-	//_, max := ur.findMaxAndMinId()
-	//model.Id = max + 1
-	//ur.users = append(ur.users, model)
+
 	return model
 }
 

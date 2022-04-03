@@ -5,22 +5,16 @@ import (
 	"gorm.io/gorm"
 )
 
-// TODO: check
-type IDbConnectionFactory[TConnection interface{}] interface {
-	Create() (TConnection, error)
-}
-
-// TODO: check
-type IDbContext interface {
-	GetDbConnection()
-}
-
-type GormDbContext struct {
+type AppDbContext struct {
 	connection *gorm.DB
 }
 
 // TODO: inspect gorm.Config struct
-func NewDbContext(connectionString string) (*GormDbContext, error) {
+func NewDbContext(connectionString string) (*AppDbContext, error) {
 	db, err := gorm.Open(postgres.Open(connectionString), &gorm.Config{})
-	return &GormDbContext{db}, err
+	return &AppDbContext{db}, err
+}
+
+func (context *AppDbContext) GetConnection() *gorm.DB {
+	return context.connection
 }

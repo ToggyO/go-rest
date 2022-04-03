@@ -10,10 +10,12 @@ import (
 type usersService struct {
 	repository      repositories.IUsersRepository
 	passwordService contracts.IPasswordService
+	mapper          contracts.IMapper
 }
 
-func NewUsersService(r repositories.IUsersRepository, ps contracts.IPasswordService) IUsersService {
-	return &usersService{r, ps}
+func NewUsersService(r repositories.IUsersRepository,
+	ps contracts.IPasswordService, m contracts.IMapper) IUsersService {
+	return &usersService{r, ps, m}
 }
 
 func (us *usersService) GetById(id int) *dto.UserDto {
@@ -22,11 +24,14 @@ func (us *usersService) GetById(id int) *dto.UserDto {
 		return nil
 	}
 	// TODO: add automapper
-	return &dto.UserDto{
-		Id:    model.Id,
-		Name:  model.Name,
-		Email: model.Email,
-	}
+	var dto *dto.UserDto
+	us.mapper.Map(model, dto)
+	return dto
+	//return &dto.UserDto{
+	//	Id:    model.Id,
+	//	Name:  model.Name,
+	//	Email: model.Email,
+	//}
 }
 
 func (us *usersService) Create(obj *dto.CreateUserDto) *dto.UserDto {
