@@ -1,0 +1,1 @@
+```docker-compose -f  .\deploy\local\docker-compose.local.yml --env-file env.development up -d --build```

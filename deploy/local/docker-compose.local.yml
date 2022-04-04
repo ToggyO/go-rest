@@ -5,12 +5,17 @@ services:
     image: postgres:12.1
     container_name: go-rest-postgres-dev
     restart: on-failure
+    env_file:
+      - ../../env.development
     ports:
-      - ${DB_EXTERNAL_PORT}:${DB_PORT}
+      - ${GO_REST_DB_EXTERNAL_PORT}:${GO_REST_DB_PORT}
     environment:
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
-      - POSTGRES_HOST=${DB_HOST}
+      - POSTGRES_USER=${GO_REST_DB_USER}
+      - POSTGRES_PASSWORD=${GO_REST_DB_PASSWORD}
+      - POSTGRES_DB=${GO_REST_DB_NAME}
+      - POSTGRES_HOST=${GO_REST_DB_HOST}
     volumes:
-      - ../../go-rest-volumes/postgres-dev:/var/lib/postgresql/data
+      - go-rest-volume-postgres-dev:/var/lib/postgresql/data
+
+volumes:
+  go-rest-volume-postgres-dev:

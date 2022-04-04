@@ -12,5 +12,5 @@ func NewMapper() contracts.IMapper {
 }
 
 func (m *Mapper) Map(source, dest interface{}) {
-	automapper.Map(source, dest)
+	automapper.MapLoose(source, dest)
 }

@@ -13,6 +13,7 @@ import (
 
 func BuildDigIoc(configuration *config.Configuration) (*dig.Container, error) {
 	container := dig.New()
+	container.Provide(func() *config.Configuration { return configuration })
 
 	serviceDescriptors := [][]di.ServiceDescriptor{
 		api.BindRouter(configuration),
@@ -24,22 +25,15 @@ func BuildDigIoc(configuration *config.Configuration) (*dig.Container, error) {
 		services.BindInfrastructure(),
 	}
 
-	errors := []error{
-		container.Provide(func() *config.Configuration { return configuration }),
-	}
-
 	for _, sd := range serviceDescriptors {
-		errors = append(errors, HandleServiceDescriptors(container, sd))
-	}
-
-	for _, err := range errors {
-		if err != nil {
+		if err := HandleServiceDescriptors(container, sd); err != nil {
 			return nil, err
 		}
 	}
 
 	collection := []func(c *dig.Container){
 		api.AfterBuild,
+		data_access.AfterBuild,
 	}
 
 	for _, f := range collection {

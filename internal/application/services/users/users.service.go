@@ -23,19 +23,14 @@ func (us *usersService) GetById(id int) *dto.UserDto {
 	if model == nil {
 		return nil
 	}
-	// TODO: add automapper
-	var dto *dto.UserDto
-	us.mapper.Map(model, dto)
-	return dto
-	//return &dto.UserDto{
-	//	Id:    model.Id,
-	//	Name:  model.Name,
-	//	Email: model.Email,
-	//}
+
+	userDto := new(dto.UserDto)
+	us.mapper.Map(model, userDto)
+	return userDto
 }
 
 func (us *usersService) Create(obj *dto.CreateUserDto) *dto.UserDto {
-	// TODO: add automapper
+
 	passwordModel := us.passwordService.CreatePasswordAndGenerateSalt(obj.Password)
 	model := &users.UserModel{
 		Name:  obj.Name,
@@ -45,9 +40,26 @@ func (us *usersService) Create(obj *dto.CreateUserDto) *dto.UserDto {
 	}
 
 	model = us.repository.Create(model)
-	return &dto.UserDto{
-		Id:    model.Id,
-		Name:  model.Name,
-		Email: model.Email,
+
+	userDto := new(dto.UserDto)
+	us.mapper.Map(model, userDto)
+	return userDto
+}
+
+func (us *usersService) Update(obj *dto.UpdateUserDto) *dto.UserDto {
+	model := us.repository.GetById(obj.Id)
+	if model == nil {
+		return nil
 	}
+
+	us.mapper.Map(obj, model)
+	us.repository.Update(model)
+
+	userDto := new(dto.UserDto)
+	us.mapper.Map(model, userDto)
+	return userDto
+}
+
+func (us *usersService) Delete(id int) {
+	us.repository.Delete(id)
 }

@@ -2,25 +2,21 @@ package controllers
 
 import (
 	"go-rest/internal/api/http/handlers"
-	"go-rest/internal/application/contracts"
 	dto "go-rest/internal/application/dto/users"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-type IUsersController interface {
-	GetById(ctx *gin.Context)
-	Create(ctx *gin.Context)
-}
-
-type usersController struct {
+type UsersController struct {
 	handler handlers.IUsersHandler
-	logger  contracts.ILogger
 }
 
-func (uc *usersController) GetById(ctx *gin.Context) {
-	uc.logger.Info("KEK")
+func NewUsersController(h handlers.IUsersHandler) *UsersController {
+	return &UsersController{h}
+}
+
+func (uc *UsersController) GetById(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		// TODO: return error response
@@ -30,7 +26,7 @@ func (uc *usersController) GetById(ctx *gin.Context) {
 	ctx.JSON(result.HttpStatusCode, result)
 }
 
-func (uc *usersController) Create(ctx *gin.Context) {
+func (uc *UsersController) Create(ctx *gin.Context) {
 	body := &dto.CreateUserDto{}
 	err := ctx.Bind(body)
 	if err != nil {
@@ -41,6 +37,23 @@ func (uc *usersController) Create(ctx *gin.Context) {
 	ctx.JSON(result.HttpStatusCode, result)
 }
 
-func NewUsersController(h handlers.IUsersHandler, l contracts.ILogger) IUsersController {
-	return &usersController{h, l}
+func (uc *UsersController) Update(ctx *gin.Context) {
+	body := &dto.UpdateUserDto{}
+	err := ctx.Bind(body)
+	if err != nil {
+		// TODO: return error response
+	}
+
+	result := uc.handler.Update(body)
+	ctx.JSON(result.HttpStatusCode, result)
+}
+
+func (uc *UsersController) Delete(ctx *gin.Context) {
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		// TODO: return error response
+	}
+
+	result := uc.handler.Delete(id)
+	ctx.JSON(result.HttpStatusCode, result)
 }

@@ -7,11 +7,11 @@ import (
 )
 
 type usersRouter struct {
-	usersController controllers.IUsersController
+	usersController *controllers.UsersController
 	handler         *gin.RouterGroup
 }
 
-func NewUsersRouter(uc controllers.IUsersController, h *gin.RouterGroup) contracts.IRouteBinder {
+func NewUsersRouter(uc *controllers.UsersController, h *gin.RouterGroup) contracts.IRouteBinder {
 	return &usersRouter{
 		usersController: uc,
 		handler:         h,
@@ -23,5 +23,7 @@ func (r *usersRouter) Bind() {
 	{
 		users.GET("/:id", r.usersController.GetById)
 		users.POST("", r.usersController.Create)
+		users.PATCH("", r.usersController.Update)
+		users.DELETE("/:id", r.usersController.Delete)
 	}
 }

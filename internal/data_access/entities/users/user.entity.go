@@ -11,3 +11,7 @@ type UserEntity struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
+
+func (u UserEntity) TableName() string {
+	return "users"
+}

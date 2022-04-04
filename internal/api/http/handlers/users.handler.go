@@ -10,6 +10,8 @@ import (
 type IUsersHandler interface {
 	GetById(id int) *responses.Response[*dto.UserDto]
 	Create(obj *dto.CreateUserDto) *responses.Response[*dto.UserDto]
+	Update(obj *dto.UpdateUserDto) *responses.Response[*dto.UserDto]
+	Delete(id int) *responses.Response[interface{}]
 }
 
 type usersHandler struct {
@@ -44,4 +46,23 @@ func (uh *usersHandler) Create(obj *dto.CreateUserDto) *responses.Response[*dto.
 	r.SuccessResponse.Data = user
 
 	return r
+}
+
+func (uh *usersHandler) Update(obj *dto.UpdateUserDto) *responses.Response[*dto.UserDto] {
+	validationResponse := validation.ValidateModel[*dto.UpdateUserDto, *dto.UserDto](obj)
+	if !validationResponse.Success {
+		return validationResponse
+	}
+
+	user := uh.service.Update(obj)
+
+	r := responses.NewResponse[*dto.UserDto]()
+	r.SuccessResponse.Data = user
+
+	return r
+}
+
+func (uh *usersHandler) Delete(id int) *responses.Response[interface{}] {
+	uh.service.Delete(id)
+	return responses.NewResponse[interface{}]()
 }
